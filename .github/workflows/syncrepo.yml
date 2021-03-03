@@ -15,4 +15,4 @@ jobs:
       with:
           src: ${{ secrets.SRC }}
           dst1: ${{ secrets.DST1 }}
-          dst2: ${{ secrets.DS2 }}
+          dst2: ${{ secrets.DST2 }}
