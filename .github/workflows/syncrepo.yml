@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Sync Repository
-      uses: actions@sync
+      uses: GitCourser/actions@sync
       env:
           KEY0: ${{ secrets.KEY0 }}
           KEY1: ${{ secrets.KEY1 }}
