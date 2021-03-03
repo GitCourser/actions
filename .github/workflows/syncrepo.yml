@@ -13,6 +13,6 @@ jobs:
           KEY0: ${{ secrets.KEY0 }}
           KEY1: ${{ secrets.KEY1 }}
       with:
-          src-repo: ${{ secrets.SRC }}
-          dst1-repo: ${{ secrets.DST1 }}
-          dst2-repo: ${{ secrets.DST2 }}
+          src: ${{ secrets.SRC }}
+          dst1: ${{ secrets.DST1 }}
+          dst2: ${{ secrets.DST2 }}
