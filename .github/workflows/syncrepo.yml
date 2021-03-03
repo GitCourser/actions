@@ -4,16 +4,18 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '30 0-17 * * *'
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: github.repository == 'GitCourser/actions'
     steps:
     - name: Sync Repository
-      uses: github.repository@sync
+      uses: GitCourser/actions@sync
       env:
-          KEY0: ${{ secrets.KEY0 }}
-          KEY1: ${{ secrets.KEY1 }}
+        KEY0: ${{ secrets.KEY0 }}
+        KEY1: ${{ secrets.KEY1 }}
       with:
-          src: ${{ secrets.SRC }}
-          dst1: ${{ secrets.DST1 }}
-          dst2: ${{ secrets.DST2 }}
+        src: ${{ secrets.SRC }}
+        dst1: ${{ secrets.DST1 }}
+        dst2: ${{ secrets.DST2 }}
