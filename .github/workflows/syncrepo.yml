@@ -13,6 +13,6 @@ jobs:
           KEY0: ${{ secrets.KEY0 }}
           KEY1: ${{ secrets.KEY1 }}
       with:
-          src: "gitee.com:lxk0301/jd_scripts"
-          dst1: "Courser/jd_lxk"
-          dst2: "GitCourser/jd_lxk"
+          src: ${{ secrets.SRC }}
+          dst1: ${{ secrets.DST1 }}
+          dst2: ${{ secrets.DS2 }}
