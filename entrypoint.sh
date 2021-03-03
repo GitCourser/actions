@@ -4,7 +4,6 @@ echo "$KEY1" > /root/.ssh/id1_rsa
 chmod 600 /root/.ssh/*_rsa
 
 cd /root
-echo `git clone "git@$1.git" repo`
 git clone "git@$1.git" repo
 cd /root/.ssh
 mv id_rsa id0_rsa
