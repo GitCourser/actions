@@ -1,0 +1,18 @@
+name: Sync Repository Action
+
+on:
+  workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Sync Repository
+      uses: actions@sync
+      env:
+          KEY0: ${{ secrets.KEY0 }}
+          KEY1: ${{ secrets.KEY1 }}
+      with:
+          src-repo: ${{ secrets.src }}
+          dst1-repo: ${{ secrets.dst1 }}
+          dst2-repo: ${{ secrets.dst1 }}
