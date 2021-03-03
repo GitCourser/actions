@@ -1,14 +1,15 @@
 name: Sync Repository Action
 
 on:
-  workflow_dispatch
-
+  workflow_dispatch:
+  schedule:
+    - cron: '30 0-17 * * *'
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - name: Sync Repository
-      uses: GitCourser/actions@sync
+      uses: github.repository@sync
       env:
           KEY0: ${{ secrets.KEY0 }}
           KEY1: ${{ secrets.KEY1 }}
