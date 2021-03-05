@@ -1,0 +1,14 @@
+name: Download scf
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.repository == 'GitCourser/actions'
+    steps:
+    - name: Download scf
+      uses: GitCourser/actions@scf
+      with:
+        pip: "httpx"
