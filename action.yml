@@ -1,22 +1,14 @@
-name: 'Sync repository'
-description: 'Sync repository'
+name: 'down scf'
+description: 'down scf'
 branding:
   icon: 'git-branch'
   color: 'green'
 inputs:
-  src:
-    description: '原库'
-    required: true
-  dst1:
-    description: '目标库1'
-    required: true
-  dst2:
-    description: '目标库2'
+  pip:
+    description: '包名'
     required: true
 runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.src }}
-    - ${{ inputs.dst1 }}
-    - ${{ inputs.dst2 }}
+    - ${{ inputs.pip }}
