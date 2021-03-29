@@ -11,9 +11,5 @@ jobs:
       run: |
         mkdir download
         docker pull nevinee/jd:v4
-        docker tag 925eb6010e56 myjd
         docker images
-        docker exec myjd /bin/bash
-        ls
-        ls /
-        ls /root
+        docker run
