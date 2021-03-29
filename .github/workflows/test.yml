@@ -12,4 +12,4 @@ jobs:
         mkdir download
         docker pull nevinee/jd:v4
         docker images
-        docker run
+        docker ps -l
