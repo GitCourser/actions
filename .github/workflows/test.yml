@@ -12,4 +12,9 @@ jobs:
         mkdir download
         docker pull nevinee/jd:v4
         docker images
-        docker ps -a
+        docker ps -l
+        docker save nevinee/jd:v4 | gzip > download/jd.tar.gz
+    - name: Upload your file
+      run: |
+        curl -sL https://git.io/file-transfer | sh
+        ./transfer wet ./download/
