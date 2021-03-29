@@ -11,7 +11,7 @@ jobs:
       run: |
         mkdir download
         docker pull nevinee/jd:v4
-        docker exec nevinee/jd /bin/bash
+        docker exec jd /bin/bash
         ls
         ls /
         ls /root
