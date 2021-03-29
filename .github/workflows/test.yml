@@ -11,4 +11,4 @@ jobs:
       run: |
         mkdir download
         docker pull nevinee/jd:v4
-        docker inspect -f '{{.ID}}' v4
+        docker inspect -f '{{.ID}}' nevinee/jd
