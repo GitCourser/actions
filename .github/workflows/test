@@ -1,0 +1,12 @@
+name: test
+
+on:
+  workflow_dispatch
+
+jobs:
+  downloading:
+    runs-on: ubuntu-latest
+    steps:
+    - name: test
+      run: |
+        sudo docker run hello-world
