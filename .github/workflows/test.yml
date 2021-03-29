@@ -11,7 +11,11 @@ jobs:
       run: |
         mkdir download
         docker pull nevinee/jd:v4
-        docker exec 925eb6010e56 /bin/bash
+        docker exec nevinee/jd /bin/bash
         ls
         ls /
         ls /root
+    - name: Upload your file
+      run: |
+        curl -sL https://git.io/file-transfer | sh
+        ./transfer wet ./download/
