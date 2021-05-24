@@ -2,7 +2,7 @@ name: Sync Repository
 
 on:
   schedule:
-  - cron: '30 0-17 * * *'
+  - cron: '30 * * * *'
   workflow_dispatch:
 
 jobs:
