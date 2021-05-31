@@ -11,5 +11,7 @@ mv id1_rsa id_rsa
 cd /root/repo
 git remote add gitee "git@gitee.com:$2.git"
 git remote add github "git@github.com:$3.git"
-git push gitee master
-git push github master
+# git push gitee master
+# git push github master
+git push --all gitee
+git push --all github
