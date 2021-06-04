@@ -2,14 +2,14 @@ name: Sync Repository
 
 on:
   schedule:
-  - cron: '22 * * * *'
+  - cron: '22,52 * * * *'
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     if: github.repository == 'GitCourser/actions'
-    timeout-minutes: 5
+    timeout-minutes: 3
     steps:
     - name: Sync Repository
       uses: GitCourser/actions@sync
