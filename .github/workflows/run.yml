@@ -2,8 +2,8 @@ name: CI
 
 on:
   schedule:
-    - cron: '38 11 * * *'
-    - cron: '40 11 * * *'
+    - cron: '*/8 11-15 * * *'
+    - cron: '*/20 11-15 * * *'
   workflow_dispatch:
 
 env:
