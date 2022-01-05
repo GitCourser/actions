@@ -20,9 +20,10 @@ jobs:
         with:
           ref: script
       - name: Run Script
+        env:
+          chaoxing: ${{ secrets.CHAOXING }}
+          WX_CFG: ${{ secrets.WX_CFG }}
         run: |
-          date -R
-          ls -l
+          pip install lxml
           cd other
           python ./chaoxing.py
-          python -V
