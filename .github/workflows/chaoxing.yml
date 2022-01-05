@@ -1,9 +1,10 @@
-name: CI
+name: ChaoXing
 
 on:
   schedule:
-    - cron: '*/8 7-9 * * *'
-    - cron: '*/20 11-15 * * *'
+    - cron: '*/5 11-13 * * 1-5'
+    - cron: '*/5 0-9 * * 0,6'
+    - cron: '*/5 23 * * 5,6'
   workflow_dispatch:
 
 env:
@@ -17,8 +18,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
-          ref: scf
-      - name: Run a multi-line script
+          ref: script
+      - name: Run Script
         run: |
           date -R
           ls -l
+          cd other
+          python ./chaoxing.py
+          python -V
