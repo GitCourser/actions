@@ -1,23 +1,36 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2021-12-07 19:54:45
-# LastEditTime : 2022-01-06 17:37:45
+# LastEditTime : 2022-01-07 00:32:35
 # Description  : 超星学习通签到
 # ==============================================================================
 
 import requests
 from lxml import etree
 import base64
+import time
 import sys
 import re
 sys.path.append('..')
 from common import runtime, UA, WeChat, getcfg, isCloud
 
-
 app = '超星学习通签到'
 api = 'https://mobilelearn.chaoxing.com/'
 notify = WeChat()
 course_dict = {}
+
+
+def calctime():
+    """计算结束时间戳"""
+    hour = time.localtime().tm_hour
+    t_str = time.strftime("%Y-%m-%d", time.localtime())
+    if hour > 18:
+        t_str += ' 21:30:00'
+    elif hour > 12:
+        t_str += ' 18:00:00'
+    else:
+        t_str += ' 12:00:00'
+    return int(time.mktime(time.strptime(t_str, '%Y-%m-%d %H:%M:%S')))
 
 
 def login(username, password):
@@ -143,8 +156,17 @@ def main():
     getclass()
 
     # print(course_dict)
-    for i in course_dict.keys():
-        qiandao(i, course_dict[i], address)
+    if isCloud:
+        st = int(time.time())
+        et = calctime()
+        while (st < et):
+            for i in course_dict.keys():
+                qiandao(i, course_dict[i], address)
+            time.sleep(300)
+            st = int(time.time())
+    else:
+        for i in course_dict.keys():
+            qiandao(i, course_dict[i], address)
 
 
 def run():
