@@ -61,10 +61,11 @@ def getclass():
             # courseid=class_item.xpath('''./input[@name='courseId']/@value''')[0]
             # classid=class_item.xpath('''./input[@name='classId']/@value''')[0]
             try:
-                class_item_name = class_item.xpath('./div[2]/h3/a/@title')[0]
-                # 等待开课的课程由于尚未对应链接，所以缺少a标签。
-                print(class_item_name)
-                course_dict[class_item_name] = f'''https://mooc1-2.chaoxing.com{class_item.xpath('./div[1]/a[1]/@href')[0]}'''
+                class_name = class_item.xpath('./div[2]/h3/a/@title')[0]
+                class_url = class_item.xpath('./div[2]/h3/a/@href')[0]
+                print(class_name)
+                # print(class_url)
+                course_dict[class_name] = f'https://mooc1-2.chaoxing.com{class_url}'
             except Exception():
                 pass
         print('—' * 35)
