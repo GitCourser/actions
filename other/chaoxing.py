@@ -91,6 +91,7 @@ def qiandao(currClass, url, address):
     tree = etree.HTML(res.text)
     # fid=tree.xpath('/html/body/input[4]/@value')
     activeDetail = tree.xpath('/html/body/div[2]/div[2]/div/div/div/@onclick')
+    print(activeDetail)
     if not activeDetail:
         print(f'{currClass}------暂无签到活动')
     else:
