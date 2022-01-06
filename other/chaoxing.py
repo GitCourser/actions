@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2021-12-07 19:54:45
-# LastEditTime : 2022-01-05 23:40:07
+# LastEditTime : 2022-01-06 17:37:45
 # Description  : 超星学习通签到
 # ==============================================================================
 
@@ -61,8 +61,9 @@ def getclass():
             # courseid=class_item.xpath('''./input[@name='courseId']/@value''')[0]
             # classid=class_item.xpath('''./input[@name='classId']/@value''')[0]
             try:
-                class_name = class_item.xpath('./div[2]/h3/a/@title')[0]
-                class_url = class_item.xpath('./div[2]/h3/a/@href')[0]
+                class_info = class_item.xpath('./div[2]/h3/a')[0]
+                class_name = class_info.xpath('@title')[0]
+                class_url = class_info.xpath('@href')[0]
                 print(class_name)
                 # print(class_url)
                 course_dict[class_name] = f'https://mooc1-2.chaoxing.com{class_url}'
@@ -79,7 +80,7 @@ def qiandao(currClass, url, address):
     Args:
         currClass (str): 课程名
         url (str): 课程地址
-        address (str): 签到地址
+        address (str): 签到位置
     """
 
     courseid = re.findall(r'courseid=(.*?)&', url)[0]
@@ -91,16 +92,16 @@ def qiandao(currClass, url, address):
     tree = etree.HTML(res.text)
     # fid=tree.xpath('/html/body/input[4]/@value')
     activeDetail = tree.xpath('/html/body/div[2]/div[2]/div/div/div/@onclick')
-    print(activeDetail)
     if not activeDetail:
-        print(f'{currClass}------暂无签到活动')
+        print(f'{currClass}------暂无活动')
     else:
         print()
         print(f'{currClass}------检测到：{len(activeDetail)} 个活动')
+        print(activeDetail)
         msg = ''
 
         for activeID in activeDetail:
-            id = re.findall(r'activeDetail\((.*?),', activeID)[0]
+            id = re.findall(r'activeDetail\((\d+),', activeID)[0]
             enc = ''
             data = session.get(f'{api}v2/apis/sign/refreshQRCode?activeId={id}').json()['data']
             if data is not None:
