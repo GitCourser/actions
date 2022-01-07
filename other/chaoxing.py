@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2021-12-07 19:54:45
-# LastEditTime : 2022-01-07 00:32:35
+# LastEditTime : 2022-01-07 16:46:05
 # Description  : 超星学习通签到
 # ==============================================================================
 
@@ -18,6 +18,7 @@ app = '超星学习通签到'
 api = 'https://mobilelearn.chaoxing.com/'
 notify = WeChat()
 course_dict = {}
+nosign = []
 
 
 def calctime():
@@ -115,6 +116,9 @@ def qiandao(currClass, url, address):
 
         for activeID in activeDetail:
             id = re.findall(r'activeDetail\((\d+),', activeID)[0]
+            if id in nosign:
+                print('非签到活动')
+                continue
             enc = ''
             data = session.get(f'{api}v2/apis/sign/refreshQRCode?activeId={id}').json()['data']
             if data is not None:
@@ -127,6 +131,7 @@ def qiandao(currClass, url, address):
             # res=session.get(url,headers=headers)
             print(res.text)
             if '非签到活动' in res.text:
+                nosign.append(id)
                 continue
             if res.text == 'success':
                 print(f'{currClass}: 签到成功')
@@ -162,6 +167,7 @@ def main():
         while (st < et):
             for i in course_dict.keys():
                 qiandao(i, course_dict[i], address)
+            print('\n等待5分钟...\n')
             time.sleep(300)
             st = int(time.time())
     else:
