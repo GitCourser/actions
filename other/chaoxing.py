@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
-# Date         : 2021-12-07 19:54:45
-# LastEditTime : 2022-01-07 16:46:05
+# Date         : 2021-01-01 19:54:45
+# LastEditTime : 2022-01-08 13:43:56
 # Description  : 超星学习通签到
 # ==============================================================================
 
@@ -18,7 +18,7 @@ app = '超星学习通签到'
 api = 'https://mobilelearn.chaoxing.com/'
 notify = WeChat()
 course_dict = {}
-nosign = []
+issign = []
 
 
 def calctime():
@@ -111,33 +111,36 @@ def qiandao(currClass, url, address):
     else:
         print()
         print(f'{currClass}------检测到：{len(activeDetail)} 个活动')
-        print(activeDetail)
+        # print(activeDetail)
         msg = ''
 
         for activeID in activeDetail:
-            id = re.findall(r'activeDetail\((\d+),', activeID)[0]
-            if id in nosign:
-                print('非签到活动')
+            id = re.findall(r'activeDetail\((\d+),(\d),', activeID)[0]
+            if id[0] in issign:
+                print('已签到')
+                continue
+            if id[1] != '2':
+                print(id, '非签到活动')
                 continue
             enc = ''
-            data = session.get(f'{api}v2/apis/sign/refreshQRCode?activeId={id}').json()['data']
+            data = session.get(f'{api}v2/apis/sign/refreshQRCode?activeId={id[0]}').json()['data']
             if data is not None:
                 enc = data['enc']
             # print(enc)
 
-            url = f'{api}pptSign/stuSignajax?activeId={id}&clientip=&latitude=-1&longitude=-1&appType=15&fid=0&enc={enc}&address={address}'
+            url = f'{api}pptSign/stuSignajax?activeId={id[0]}&clientip=&latitude=-1&longitude=-1&appType=15&fid=0&enc={enc}&address={address}'
             res = session.get(url, headers=headers)
             # url='https://mobilelearn.chaoxing.com//widget/sign/pcStuSignController/checkSignCode?activeId={id}&signCode={signcode}'.format(id=id,signcode=1236)
             # res=session.get(url,headers=headers)
             print(res.text)
-            if '非签到活动' in res.text:
-                nosign.append(id)
-                continue
+            # if '非签到活动' in res.text:
+            #     continue
             if res.text == 'success':
+                issign.append(id[0])
                 print(f'{currClass}: 签到成功')
                 msg += f'{currClass}: 签到成功\n'
-            elif res.text == '您已签到过了':
-                print(f'{currClass}: 您已签到过了')
+            # elif res.text == '您已签到过了':
+            #     print(f'{currClass}: 您已签到过了')
             else:
                 print(f'{currClass}: 签到失败\n{res.text}')
                 msg += f'{currClass}: 签到失败\n{res.text}\n'
