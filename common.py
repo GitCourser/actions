@@ -81,7 +81,8 @@ class WeChat:
 
     def send(self, title, content):
         msg = f'''🔔 {title}\n⏲ {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n{'——' * 7}\n{content}'''
-        url = f'{self.api}message/send?access_token={self._get_access_token()}'
+        token = self.get_access_token() if os.environ.get('GITHUB_ACTIONS') else self._get_access_token()
+        url = f'{self.api}message/send?access_token={token}'
         data = {
             'touser': self.touser,
             'msgtype': 'text',
