@@ -71,7 +71,7 @@ class WeChat:
                 return access_token
         else:
             cur_time = time.time()
-            if 0 < cur_time - float(t) < 7260:
+            if 0 < cur_time - float(t) < 7200:
                 return access_token
             else:
                 with open('access_token.conf', 'w') as f:
