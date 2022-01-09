@@ -133,14 +133,13 @@ def qiandao(currClass, url, address):
             # url='https://mobilelearn.chaoxing.com//widget/sign/pcStuSignController/checkSignCode?activeId={id}&signCode={signcode}'.format(id=id,signcode=1236)
             # res=session.get(url,headers=headers)
             print(res.text)
-            # if '非签到活动' in res.text:
-            #     continue
             if res.text == 'success':
                 issign.append(id[0])
                 print(f'{currClass}: 签到成功')
                 msg += f'{currClass}: 签到成功\n'
-            # elif res.text == '您已签到过了':
-            #     print(f'{currClass}: 您已签到过了')
+            elif res.text == '您已签到过了':
+                issign.append(id[0])
+                print(f'{currClass}: 您已签到过了')
             else:
                 print(f'{currClass}: 签到失败\n{res.text}')
                 msg += f'{currClass}: 签到失败\n{res.text}\n'
