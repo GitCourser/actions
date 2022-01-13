@@ -1,4 +1,4 @@
-pip install --upgrade pip
+# pip install --upgrade pip
 mkdir py
 pip install -t py "$1"
 tar -zcvf py.tar.gz py
