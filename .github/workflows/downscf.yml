@@ -11,4 +11,4 @@ jobs:
     - name: Download scf
       uses: GitCourser/actions@scf
       with:
-        pip: "httpx==0.17.1"
+        pip: "httpx==0.17.0"
