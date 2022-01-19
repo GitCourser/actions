@@ -11,4 +11,4 @@ jobs:
     - name: Download scf
       uses: GitCourser/actions@scf
       with:
-        pip: "requests"
+        pip: "Brotli"
