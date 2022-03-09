@@ -1,0 +1,26 @@
+name: AirPort
+
+on:
+  schedule:
+    - cron: '10 10 * * *'  # 每天18点
+  workflow_dispatch:
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.repository == 'GitCourser/actions'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: script
+      - name: Run Script
+        env:
+          airport: ${{ secrets.AIRPORT }}
+          WX_CFG: ${{ secrets.WX_CFG }}
+        run: |
+          cd other
+          python ./airport.py
