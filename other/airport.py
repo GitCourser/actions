@@ -88,7 +88,7 @@ def main():
             ms = Ping(str(k).replace('http://', '').replace('https://', ''))
             U[j] = {'ms': int(ms), 'url': k}
         U.sort(key=lambda x: x['ms'])
-        # print(U)
+        print(U)
         for j in U:
             if j['ms'] != -1:
                 url = j['url']
