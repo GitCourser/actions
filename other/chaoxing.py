@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2021-01-01 19:54:45
-# LastEditTime : 2022-01-08 13:43:56
+# LastEditTime : 2022-03-09 23:28:31
 # Description  : 超星学习通签到
 # ==============================================================================
 
@@ -133,6 +133,8 @@ def qiandao(currClass, url, address):
             # url='https://mobilelearn.chaoxing.com//widget/sign/pcStuSignController/checkSignCode?activeId={id}&signCode={signcode}'.format(id=id,signcode=1236)
             # res=session.get(url,headers=headers)
             print(res.text)
+            # if '非签到活动' in res.text:
+            #     continue
             if res.text == 'success':
                 issign.append(id[0])
                 print(f'{currClass}: 签到成功')
@@ -168,9 +170,13 @@ def main():
         et = calctime()
         while (st < et):
             for i in course_dict.keys():
-                qiandao(i, course_dict[i], address)
-            print('\n等待5分钟...\n')
-            time.sleep(300)
+                try:
+                    qiandao(i, course_dict[i], address)
+                except Exception:
+                    print('出错')
+                    time.sleep(10)
+            print('\n等待10分钟...\n')
+            time.sleep(600)
             st = int(time.time())
     else:
         for i in course_dict.keys():
