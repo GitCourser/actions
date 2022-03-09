@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2022-01-29 21:08:26
-# LastEditTime : 2022-03-09 22:42:42
+# LastEditTime : 2022-03-09 23:22:06
 # Description  : 机场签到
 # ==============================================================================
 
@@ -101,8 +101,8 @@ def main():
                 continue
             case = SignIn(url)
             Feedback += i['note'] + '：' + case + '\n'
-        except Exception as e:
-            Feedback += f'错误: {e}\n'
+        except Exception:
+            Feedback += i['note'] + '：出错\n'
     print(Feedback)
 
     if isCloud:
