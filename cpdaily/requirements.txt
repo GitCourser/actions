@@ -1,0 +1,3 @@
+pycryptodome==3.14.1
+pyDes==2.0.1
+ruamel.base==1.0.0
