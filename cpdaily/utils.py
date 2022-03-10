@@ -16,7 +16,7 @@ yaml = YAML()
 # 读取yml配置
 def getYmlConfig(yaml_file='config.yml'):
     if 'CPDAILY' in os.environ:
-        data = os.environ['CPDAILY']
+        data = os.environ['CPDAILY'].encode('utf-8').decode('utf-8')
     else:
         with open(yaml_file, encoding='utf-8') as f:
             data = f.read()
