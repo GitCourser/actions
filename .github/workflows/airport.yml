@@ -1,4 +1,4 @@
-name: AirPort
+name: AirPort & cpdaily
 
 on:
   schedule:
@@ -21,6 +21,10 @@ jobs:
         env:
           airport: ${{ secrets.AIRPORT }}
           WX_CFG: ${{ secrets.WX_CFG }}
+          CPDAILY: ${{ secrets.CPDAILY }}
         run: |
           cd other
           python ./airport.py
+          cd ../cpdaily
+          pip install -r requirements.txt
+          python ./submit.py
