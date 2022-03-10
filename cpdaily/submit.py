@@ -168,7 +168,8 @@ def fillForm(form):
                 # fileName = uploadPicture(default['value'])
                 # formItem['value'] = getPictureUrl(fileName)
             item = f'''必填问题{sort}：{formItem['title']}: {formItem['value']}'''
-            log(item)
+            if not isCloud:
+                log(item)
             sort += 1
     return form
 
@@ -239,7 +240,10 @@ def submitForm(formWid, address, collectWid, schoolTaskWid, instanceWid, form):
 
 def main():
     try:
-        log('当前用户：' + user['username'])
+        if isCloud:
+            log('当前用户：xxxxxx')
+        else:
+            log('当前用户：' + user['username'])
         log('脚本开始执行')
         log('正在查询最新待填写问卷')
         params = queryForm()
