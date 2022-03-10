@@ -1,5 +1,6 @@
 # 工具类集合
 
+import os
 import sys
 import uuid
 import time
@@ -14,9 +15,12 @@ yaml = YAML()
 
 # 读取yml配置
 def getYmlConfig(yaml_file='config.yml'):
-    with open(yaml_file, encoding='utf-8') as f:
-        data = f.read()
-        config = yaml.load(data)
+    if 'CPDAILY' in os.environ:
+        data = os.environ['CPDAILY']
+    else:
+        with open(yaml_file, encoding='utf-8') as f:
+            data = f.read()
+    config = yaml.load(data)
     return config
 
 
