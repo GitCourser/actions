@@ -99,8 +99,9 @@ def queryForm():
     }
     queryCollectWidUrl = f'{api}queryCollectorProcessingList'
     res = session.post(queryCollectWidUrl, headers=headers, json={'pageSize': 20, 'pageNumber': 1}).json()
-    if len(res['datas']['rows']) < 1:
-        return None
+    # if len(res['datas']['rows']) < 1:
+    if res['datas']['totalSize'] == 0:
+        return False
 
     collectWid = res['datas']['rows'][0]['wid']
     instanceWid = res['datas']['rows'][0]['instanceWid']
@@ -137,7 +138,7 @@ def fillForm(form):
             if formItem['title'] != default['title']:
                 log(f'第{sort}个默认配置不正确，请检查')
                 log(formItem['title'], default['title'])
-                exit(-1)
+                return False
             # 文本直接赋值
             if formItem['fieldType'] == '1':
                 formItem['value'] = default['value']
@@ -247,12 +248,12 @@ def main():
         log('脚本开始执行')
         log('正在查询最新待填写问卷')
         params = queryForm()
-        if str(params) == 'None':
-            log('获取最新待填写问卷失败，可能是辅导员还没有发布')
-            exit(-1)
+        assert params, '获取最新待填写问卷失败，可能是辅导员还没有发布'
+
         log('查询最新待填写问卷成功')
         log('正在自动填写问卷')
         form = fillForm(params['form'])
+        assert form, '填写配置错误'
 
         log('填写问卷成功')
         log('正在自动提交')
@@ -265,15 +266,16 @@ def main():
             form,
         )
         if result == 'SUCCESS':
-            log('自动提交成功！')
             msg = '提交成功！'
+            log(msg)
         elif result == '该收集已填写无需再次填写':
             log('今日已提交！')
         else:
-            log('自动提交失败')
-            log('错误是' + result)
-            msg = '提交失败: ' + result
-            exit(-1)
+            msg = f'提交失败: {result}'
+            log(msg)
+    except AssertionError as e:
+        msg = e
+        log(msg)
     except Exception as e:
         msg = repr(e)
         print(msg)
