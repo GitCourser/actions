@@ -25,7 +25,7 @@ def calctime():
     """计算结束时间戳"""
     hour = time.localtime().tm_hour
     t_str = time.strftime("%Y-%m-%d", time.localtime())
-    if hour > 18:
+    if hour > 17:
         t_str += ' 21:30:00'
     elif hour > 12:
         t_str += ' 18:00:00'
