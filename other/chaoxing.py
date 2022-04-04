@@ -168,6 +168,7 @@ def main():
     if isCloud:
         st = int(time.time())
         et = calctime()
+        print('et:', et)
         while (st < et):
             for i in course_dict.keys():
                 try:
@@ -178,6 +179,7 @@ def main():
             print('\n等待10分钟...\n')
             time.sleep(600)
             st = int(time.time())
+            print('st:', st)
     else:
         for i in course_dict.keys():
             qiandao(i, course_dict[i], address)
