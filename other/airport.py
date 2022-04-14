@@ -94,7 +94,7 @@ def main():
             if j['ms'] != -1:
                 url = j['url']
                 break
-        print('最快的服务器为：' + url)
+        # print('最快的服务器为：' + url)
         try:
             foo = login(url, i['email'], i['password'])
             if foo != '登录成功':
