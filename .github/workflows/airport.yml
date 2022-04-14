@@ -1,4 +1,4 @@
-name: AirPort & cpdaily
+name: AirPort # & cpdaily
 
 on:
   schedule:
@@ -25,6 +25,6 @@ jobs:
         run: |
           cd other
           python ./airport.py
-          cd ../cpdaily
-          pip install -r requirements.txt
-          python ./submit.py
+          # cd ../cpdaily
+          # pip install -r requirements.txt
+          # python ./submit.py
