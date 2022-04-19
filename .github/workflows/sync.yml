@@ -3,19 +3,15 @@ name: sync
 on:
   workflow_dispatch:
 
-env:
-  TZ: Asia/Shanghai
-
 jobs:
   git-sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Run Script
       - name: git-sync
         uses: wei/git-sync@v3
         with:
           source_repo: "wei/git-sync"
           source_branch: "master"
-          destination_repo: ${{ secrets.DST1 }}"/git-sync"
+          destination_repo: "${{ secrets.DST1 }}/git-sync"
           destination_branch: "master"
           ssh_private_key: ${{ secrets.KEY0 }}
