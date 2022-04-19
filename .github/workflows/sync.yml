@@ -15,8 +15,8 @@ jobs:
           dst1: ${{ secrets.DST1 }}
           dst2: ${{ secrets.DST2 }}
         run:
-          echo dst1
-          echo dst2
+          echo $dst1
+          echo $dst2
       - name: git-sync
         uses: wei/git-sync@v3
         with:
