@@ -1,6 +1,8 @@
-name: sync
+name: sync git-sync
 
 on:
+  schedule:
+    - cron: '0 0 2 */6 *'
   workflow_dispatch:
 
 jobs:
@@ -8,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: git-sync
-        uses: wei/git-sync@v3
+        uses: GitCourser/git-sync@v3
         with:
           source_repo: "wei/git-sync"
           source_branch: "master"
