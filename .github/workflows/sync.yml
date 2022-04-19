@@ -11,9 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run Script
+        env:
+          dst1: ${{ secrets.DST1 }}
+          dst2: ${{ secrets.DST2 }}
         run:
-          echo ${{ secrets.DST1 }}
-          echo ${{ secrets.DST2 }}
+          echo dst1
+          echo dst2
       - name: git-sync
         uses: wei/git-sync@v3
         with:
