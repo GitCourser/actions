@@ -11,16 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Run Script
-        env:
-          dst1: ${{ secrets.DST1 }}
-          dst2: ${{ secrets.DST2 }}
-        run:
-          echo $dst1
-          echo $dst2
       - name: git-sync
         uses: wei/git-sync@v3
         with:
           source_repo: "wei/git-sync"
           source_branch: "master"
-          destination_repo: "GitCourser/git-sync"
+          destination_repo: "${{ secrets.DST1 }}/git-sync"
           destination_branch: "master"
+          ssh_private_key: ${{ secrets.KEY0 }}
