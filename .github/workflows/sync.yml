@@ -16,6 +16,6 @@ jobs:
         with:
           source_repo: "wei/git-sync"
           source_branch: "master"
-          destination_repo: "${{ secrets.DST1 }}/git-sync"
+          destination_repo: ${{ secrets.DST1 }}"/git-sync"
           destination_branch: "master"
           ssh_private_key: ${{ secrets.KEY0 }}
