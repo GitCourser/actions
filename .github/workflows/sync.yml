@@ -10,6 +10,10 @@ jobs:
   git-sync:
     runs-on: ubuntu-latest
     steps:
+      - name: Run Script
+        run:
+          echo ${{ secrets.DST1 }}
+          echo ${{ secrets.DST2 }}
       - name: git-sync
         uses: wei/git-sync@v3
         with:
