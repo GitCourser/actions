@@ -1,0 +1,19 @@
+name: sync
+
+on:
+  workflow_dispatch:
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  git-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: git-sync
+        uses: wei/git-sync@v3
+        with:
+          source_repo: "wei/git-sync"
+          source_branch: "master"
+          destination_repo: "GitCourser/git-sync"
+          destination_branch: "master"
