@@ -1,0 +1,20 @@
+name: sync Python-100-Days
+
+on:
+  schedule:
+    - cron: '0 0 3 * *'
+  workflow_dispatch:
+
+jobs:
+  git-sync:
+    runs-on: ubuntu-latest
+    if: github.repository == 'GitCourser/actions'
+    steps:
+      - name: git-sync
+        uses: GitCourser/git-sync@v3
+        with:
+          source_repo: "jackfrued/Python-100-Days"
+          source_branch: "master"
+          destination_repo: "GitCourser/Python-100-Days"
+          destination_branch: "master"
+          ssh_private_key: ${{ secrets.KEY1 }}
