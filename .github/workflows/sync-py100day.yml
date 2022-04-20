@@ -24,4 +24,4 @@ jobs:
           SSH_KEY: ${{ secrets.KEY1 }}
         with:
           github-repo: "git@github.com:GitCourser/Python-100-Days.git"
-          gitee-repo: "git@gitee.com:OSCourser/Python-100-Days.git"
+          gitee-repo: "git@gitee.com:Courser/Python-100-Days.git"
