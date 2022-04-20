@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  git-sync:
+  build:
     runs-on: ubuntu-latest
     if: github.repository == 'GitCourser/actions'
     steps:
@@ -18,3 +18,10 @@ jobs:
           destination_repo: "GitCourser/Python-100-Days"
           destination_branch: "master"
           ssh_private_key: ${{ secrets.KEY1 }}
+      - name: Sync to Gitee
+        uses: GitCourser/sync-repo-to-gitee@master
+        env:
+          SSH_KEY: ${{ secrets.KEY1 }}
+        with:
+          github-repo: "git@github.com:GitCourser/Python-100-Days.git"
+          gitee-repo: "git@gitee.com:OSCourser/Python-100-Days.git"
