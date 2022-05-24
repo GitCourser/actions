@@ -25,6 +25,7 @@ jobs:
         run: |
           cd other
           python ./airport.py
+          python chinag.py
           # cd ../cpdaily
           # pip install -r requirements.txt
           # python ./submit.py
