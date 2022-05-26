@@ -1,13 +1,14 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2021-01-01 19:54:45
-# LastEditTime : 2022-04-19 19:45:17
+# LastEditTime : 2022-05-26 17:06:36
 # Description  : 超星学习通签到
 # ==============================================================================
 
 import requests
 from lxml import etree
-import base64
+from pyDes import des, ECB, PAD_PKCS5
+from binascii import b2a_hex
 import time
 import sys
 import re
@@ -19,6 +20,13 @@ api = 'https://mobilelearn.chaoxing.com/'
 notify = WeChat()
 course_dict = {}
 issign = []
+
+
+def des_encrypt(s, key):
+    """DES 加密"""
+    k = des(key, ECB, pad=None, padmode=PAD_PKCS5)
+    en = k.encrypt(s)
+    return b2a_hex(en)
 
 
 def calctime():
@@ -50,7 +58,8 @@ def login(username, password):
     data = {
         'fid': -1,
         'uname': username,
-        'password': base64.b64encode(password.encode()).decode(),
+        'password': des_encrypt(password, 'u2oh6Vu^'),
+        # 'password': base64.b64encode(password.encode()).decode(),
         'refer': 'http%253A%252F%252Fi.chaoxing.com',
         't': True,
         'forbidotherlogin': 0
