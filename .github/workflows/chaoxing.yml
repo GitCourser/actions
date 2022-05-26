@@ -26,7 +26,7 @@ jobs:
           chaoxing: ${{ secrets.CHAOXING }}
           WX_CFG: ${{ secrets.WX_CFG }}
         run: |
-          pip list
+          python -V
 #          pip install lxml
 #          cd other
 #          python ./chaoxing.py
