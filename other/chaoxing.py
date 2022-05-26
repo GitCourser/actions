@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2021-01-01 19:54:45
-# LastEditTime : 2022-05-26 20:40:07
+# LastEditTime : 2022-05-26 20:45:07
 # Description  : 超星学习通签到
 # ==============================================================================
 
@@ -72,6 +72,7 @@ def login(username, password):
         print(msg)
         if isCloud:
             notify.send(app, msg)
+        exit()
 
 
 def getclass():
