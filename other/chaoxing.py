@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2021-01-01 19:54:45
-# LastEditTime : 2022-05-26 20:45:07
+# LastEditTime : 2022-06-02 00:34:46
 # Description  : 超星学习通签到
 # ==============================================================================
 
@@ -67,7 +67,9 @@ def login(username, password):
     session.post(url, headers=headers, data=data)
 
     ck_dict = requests.utils.dict_from_cookiejar(session.cookies)
-    if not ck_dict.get('UID'):
+    # print(ck_dict)
+    global uid
+    if not (uid := ck_dict.get('UID')):
         msg = '登录失败'
         print(msg)
         if isCloud:
@@ -145,6 +147,12 @@ def qiandao(currClass, url, address):
                 enc = data['enc']
             # print(enc)
 
+            # 预签
+            url = f'{api}newsign/preSign?courseId={courseid}&classId={clazzid}&activePrimaryId={id}&general=1&sys=1&ls=1&appType=15&&tid=&uid={uid}&ut=s'
+            res = session.get(url)
+            print('预签:', res)
+
+            # 签到
             url = f'{api}pptSign/stuSignajax?activeId={id}&clientip=&latitude=-1&longitude=-1&appType=15&fid=0&enc={enc}&address={address}'
             res = session.get(url)
             # url = f'https://mobilelearn.chaoxing.com//widget/sign/pcStuSignController/checkSignCode?activeId={id}&signCode={1236}')
