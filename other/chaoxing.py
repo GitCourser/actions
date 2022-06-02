@@ -148,9 +148,10 @@ def qiandao(currClass, url, address):
             # print(enc)
 
             # 预签
+            print('预签前:', session.cookies)
             url = f'{api}newsign/preSign?courseId={courseid}&classId={clazzid}&activePrimaryId={id}&general=1&sys=1&ls=1&appType=15&&tid=&uid={uid}&ut=s'
             res = session.get(url)
-            print('预签:', res.text)
+            print('预签后:', session.cookies)
 
             # 签到
             url = f'{api}pptSign/stuSignajax?activeId={id}&clientip=&latitude=-1&longitude=-1&appType=15&fid=0&enc={enc}&address={address}'
