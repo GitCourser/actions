@@ -1,0 +1,27 @@
+name: wjw
+
+on:
+  schedule:
+    - cron: '0 1 * * 1-5'  # 周一到周五9点
+    - cron: '0 4 * * 0,6'   # 周六周日12点
+  workflow_dispatch:
+
+env:
+  TZ: Asia/Shanghai
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    if: github.repository == 'GitCourser/actions'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: script
+      - name: Run Script
+        env:
+          WX_CFG: ${{ secrets.WX_CFG }}
+        run: |
+          pip install playwright
+          playwright install webkit
+          cd other && python wjw.py
