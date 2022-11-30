@@ -23,5 +23,5 @@ jobs:
           WX_CFG: ${{ secrets.WX_CFG }}
         run: |
           pip install playwright
-          playwright install webkit
+          playwright install --with-deps webkit
           cd other && python wjw.py
