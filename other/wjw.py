@@ -38,7 +38,7 @@ def main():
     txt = getinfo()
     msg = re.search(r'(\d+月\d+日.+时)，', txt).group(1)
     msg += '新增\n【湖北】\n'
-    if foo := re.search(r'全省新增本土确诊病例(\d+)例.+新增本土无症状感染者(\d+)例（武汉市(\d+)例，.+荆州市(\d+)例，', txt):
+    if foo := re.search(r'全省新增本土确诊病例(\d+)例.+新增本土无症状感染者(\d+)例（武汉市(\d+)例，.+?荆州市(\d+)例，', txt):
         msg += f'确　诊：{foo.group(1)}\n无症状：{foo.group(2)}\n武　汉：{foo.group(3)}\n荆　州：{foo.group(4)}'
     if isCloud:
         notify = WeChat()
