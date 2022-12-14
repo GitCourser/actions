@@ -1,9 +1,9 @@
 name: wjw
 
 on:
-  schedule:
-    - cron: '40 0 * * 1-5'  # 周一到周五8:40
-    - cron: '0 4 * * 0,6'   # 周六周日12点
+  # schedule:
+  #   - cron: '40 0 * * 1-5'  # 周一到周五8:40
+  #   - cron: '0 4 * * 0,6'   # 周六周日12点
   workflow_dispatch:
 
 env:
