@@ -1,7 +1,7 @@
 name: ChaoXing
 
 on:
-  schedule:
+  # schedule:
     # - cron: '0 11 * * 1-5'  # 周一到周五晚上19点
     # - cron: '0 23 * * 5,6'  # 周六周日早上7点
     # - cron: '0 5 * * 0,6'   # 周六周日下午13点
