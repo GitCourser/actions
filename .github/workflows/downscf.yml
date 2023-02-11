@@ -11,4 +11,4 @@ jobs:
     - name: Download scf
       uses: GitCourser/actions@scf
       with:
-        pip: "Brotli"
+        pip: "py-mini-racer"
