@@ -20,6 +20,7 @@ jobs:
       - name: Run Script
         env:
           PUBLIC_REPO_TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN }}
+          GITHUB_REPOS: ${{ github.repository }}
           ALIYUN: ${{ secrets.ALIYUN }}
           WX_CFG: ${{ secrets.WX_CFG }}
         run: |
