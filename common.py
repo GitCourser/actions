@@ -7,25 +7,24 @@
 
 """脚本公共库"""
 
-import os
 import json
 import time
 import requests
 from datetime import datetime, timedelta  # , timezone
+from os import environ, path
 from functools import wraps
 
-# path = os.path.split(os.path.dirname(__file__))[0]
-path = os.path.dirname(__file__)
+dirpath = path.dirname(__file__)
 UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.198 Safari/537.36'
-isCloud = any([os.environ.get('TENCENTCLOUD_RUNENV'), os.environ.get('GITHUB_ACTIONS'), os.environ.get('TERMUX_VERSION')])
+isCloud = environ.get('GITHUB_ACTIONS')
 
 
 def getcfg(var, file):
     """读取环境变量或者配置文件"""
-    filepath = os.path.join(path, 'config', file)
-    if var in os.environ:
-        cfg = os.environ[var]
-    elif os.path.isfile(filepath):
+    filepath = path.join(dirpath, 'config', file)
+    if var in environ:
+        cfg = environ[var]
+    elif path.isfile(filepath):
         with open(filepath, 'r') as f:
             cfg = f.read()
     else:
@@ -35,6 +34,13 @@ def getcfg(var, file):
         return json.loads(cfg)
     except Exception:
         return cfg.split()
+
+
+def setcfg(file, cfg):
+    """写入配置文件"""
+    filepath = path.join(dirpath, 'config', file)
+    with open(filepath, 'w') as f:
+        f.write(cfg)
 
 
 class WeChat:
