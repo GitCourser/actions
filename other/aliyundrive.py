@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2023-03-18 16:15:01
-# LastEditTime : 2023-03-28 19:40:38
+# LastEditTime : 2023-04-01 22:29:21
 # Description  : 阿里云盘签到
 # ==============================================================================
 
@@ -10,19 +10,21 @@ from sys import path
 
 path.append('..')
 from common import runtime, WeChat, getcfg, setcfg, isCloud
-from github import put_secret
+from time import sleep
 
 app = '阿里云盘签到'
 
 
 class SignIn:
-    def __init__(self, refresh_token):
+    def __init__(self, refresh_token, is_reward=False):
         """签到类
 
         Args:
             refresh_token (str): 云盘token
+            is_reward (bool, optional): 是否当天领取奖励, 默认为否.
         """
         self.refresh_token = refresh_token
+        self.is_reward = is_reward
         self.hide_refresh_token = self._hide_refresh_token()
         self.new_token = ''
 
@@ -34,6 +36,7 @@ class SignIn:
         """获取 access_token"""
         data = requests.post(
             'https://auth.aliyundrive.com/v2/account/token',
+            headers={'Accept-Encoding': 'gzip, deflate'},
             json={'grant_type': 'refresh_token', 'refresh_token': self.refresh_token},
         ).json()
         # print(data)
@@ -54,33 +57,45 @@ class SignIn:
 
     def _sign_in(self):
         """签到"""
-        data = requests.post(
-            'https://member.aliyundrive.com/v1/activity/sign_in_list',
-            params={'_rx-s': 'mobile'},
-            headers={'Authorization': f'Bearer {self.access_token}'},
-            json={'isReward': True},
-        ).json()
-        # print(data)
+        api = 'https://member.aliyundrive.com/v1/activity/'
+        with requests.Session() as s:
+            s.headers = {'Authorization': f'Bearer {self.access_token}', 'Accept-Encoding': 'gzip, deflate'}
+            s.params = {'_rx-s': 'mobile'}
+            data = s.post(f'{api}sign_in_list', json={'isReward': False}).json()
+            # print(data)
 
-        if 'success' not in data:
-            self.error = f'[{self.nick_name}] 签到失败, 错误信息: {data}'
-            return
+            if 'success' not in data:
+                return f'[{self.nick_name}] 获取签到信息失败: {data}'
 
-        current_day = None
-        for i, day in enumerate(data['result']['signInLogs']):
-            if day['status'] == 'miss':
-                current_day = data['result']['signInLogs'][i - 1]
-                break
+            count = data['result']['signInCount']  # 签到天数
+            days = len(data['result']['signInLogs'])  # 本月总天数
 
-        reward = (
-            '\n无奖励'
-            if not current_day['isReward']
-            else f'''\n今日获得: {current_day['reward']['name']} {current_day['reward']['description']}'''
-        )
+            if self.is_reward:
+                # 当天领奖
+                data = s.post(f'{api}sign_in_reward', json={'signInDay': count}).json()
+                # print(data)
+                try:
+                    reward = f'''\n今日获得: {data['result']['name']} {data['result']['description']}'''
+                except Exception:
+                    reward = '\n无奖励'
+            else:
+                # 月底领奖
+                if count == days:
+                    foo = []
+                    for i in range(1, days + 1):
+                        data = s.post(f'{api}sign_in_reward', json={'signInDay': i}).json()
+                        try:
+                            foo.append(data['result']['notice'])
+                        except Exception:
+                            pass
+                        sleep(1)
+                    bar = '\n'.join(foo)
+                    reward = f'\n本月奖励已全部领取.\n{bar}'
+                # 只签不领
+                else:
+                    reward = '\n今日暂不领奖'
 
-        count = data['result']['signInCount']
-
-        return f'[{self.nick_name}] 签到成功, 本月累计签到 {count} 天{reward}' if count else f'[{self.nick_name}] 签到失败'
+        return f'[{self.nick_name}] 签到成功, 本月累计签到 {count} 天{reward}'
 
     def run(self):
         """入口"""
@@ -102,6 +117,8 @@ def main():
 
     try:
         if isCloud:
+            from github import put_secret
+
             msg += '\n\n' + put_secret('ALIYUN', token)
             print(msg)
             WeChat().send(app, msg)
