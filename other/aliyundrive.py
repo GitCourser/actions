@@ -65,7 +65,7 @@ class SignIn:
             # print(data)
 
             if 'success' not in data:
-                return f'[{self.nick_name}] 获取签到信息失败: {data}'
+                return f'[{self.nick_name}] 签到失败:\n{data}'
 
             count = data['result']['signInCount']  # 签到天数
             days = len(data['result']['signInLogs'])  # 本月总天数
