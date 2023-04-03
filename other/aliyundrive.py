@@ -1,16 +1,18 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2023-03-18 16:15:01
-# LastEditTime : 2023-04-01 22:29:21
+# LastEditTime : 2023-04-03 19:59:11
 # Description  : 阿里云盘签到
 # ==============================================================================
 
-import requests
 from sys import path
+from time import sleep
+from requests import Session
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 path.append('..')
 from common import runtime, WeChat, getcfg, setcfg, isCloud
-from time import sleep
 
 app = '阿里云盘签到'
 
@@ -27,6 +29,9 @@ class SignIn:
         self.is_reward = is_reward
         self.hide_refresh_token = self._hide_refresh_token()
         self.new_token = ''
+        self.s = Session()
+        self.s.mount('https://', HTTPAdapter(max_retries=Retry(total=3, allowed_methods=['POST'])))
+        self.s.headers = {'Accept-Encoding': 'gzip, deflate'}
 
     def _hide_refresh_token(self):
         """隐藏 refresh_token"""
@@ -34,9 +39,8 @@ class SignIn:
 
     def _get_access_token(self):
         """获取 access_token"""
-        data = requests.post(
+        data = self.s.post(
             'https://auth.aliyundrive.com/v2/account/token',
-            headers={'Accept-Encoding': 'gzip, deflate'},
             json={'grant_type': 'refresh_token', 'refresh_token': self.refresh_token},
         ).json()
         # print(data)
@@ -58,42 +62,41 @@ class SignIn:
     def _sign_in(self):
         """签到"""
         api = 'https://member.aliyundrive.com/v1/activity/'
-        with requests.Session() as s:
-            s.headers = {'Authorization': f'Bearer {self.access_token}', 'Accept-Encoding': 'gzip, deflate'}
-            s.params = {'_rx-s': 'mobile'}
-            data = s.post(f'{api}sign_in_list', json={'isReward': False}).json()
+        self.s.headers |= {'Authorization': f'Bearer {self.access_token}'}
+        self.s.params = {'_rx-s': 'mobile'}
+        data = self.s.post(f'{api}sign_in_list', json={'isReward': False}).json()
+        # print(data)
+
+        if 'success' not in data:
+            return f'[{self.nick_name}] 签到失败:\n{data}'
+
+        count = data['result']['signInCount']  # 签到天数
+        days = len(data['result']['signInLogs'])  # 本月总天数
+
+        if self.is_reward:
+            # 当天领奖
+            data = self.s.post(f'{api}sign_in_reward', json={'signInDay': count}).json()
             # print(data)
-
-            if 'success' not in data:
-                return f'[{self.nick_name}] 签到失败:\n{data}'
-
-            count = data['result']['signInCount']  # 签到天数
-            days = len(data['result']['signInLogs'])  # 本月总天数
-
-            if self.is_reward:
-                # 当天领奖
-                data = s.post(f'{api}sign_in_reward', json={'signInDay': count}).json()
-                # print(data)
-                try:
-                    reward = f'''\n今日获得: {data['result']['name']} {data['result']['description']}'''
-                except Exception:
-                    reward = '\n无奖励'
+            try:
+                reward = f'''\n今日获得: {data['result']['name']} {data['result']['description']}'''
+            except Exception:
+                reward = '\n无奖励'
+        else:
+            # 月底领奖
+            if count == days:
+                foo = []
+                for i in range(1, days + 1):
+                    data = self.s.post(f'{api}sign_in_reward', json={'signInDay': i}).json()
+                    try:
+                        foo.append(data['result']['notice'])
+                    except Exception:
+                        pass
+                    sleep(1)
+                bar = '\n'.join(foo)
+                reward = f'\n本月奖励已全部领取.\n{bar}'
+            # 只签不领
             else:
-                # 月底领奖
-                if count == days:
-                    foo = []
-                    for i in range(1, days + 1):
-                        data = s.post(f'{api}sign_in_reward', json={'signInDay': i}).json()
-                        try:
-                            foo.append(data['result']['notice'])
-                        except Exception:
-                            pass
-                        sleep(1)
-                    bar = '\n'.join(foo)
-                    reward = f'\n本月奖励已全部领取.\n{bar}'
-                # 只签不领
-                else:
-                    reward = '\n今日暂不领奖'
+                reward = '\n今日暂不领奖'
 
         return f'[{self.nick_name}] 签到成功, 本月累计签到 {count} 天{reward}'
 
