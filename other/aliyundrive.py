@@ -50,7 +50,7 @@ class SignIn:
             return
 
         try:
-            self.nick_name = data['nick_name']
+            self.nick_name = data['nick_name'] if data['nick_name'] else data['user_name']
             self.access_token = data['access_token']
             self.new_token = data['refresh_token']
         except KeyError:
