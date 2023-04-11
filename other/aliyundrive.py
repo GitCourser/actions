@@ -67,6 +67,10 @@ class SignIn:
         data = self.s.post(f'{api}sign_in_list', json={'isReward': False}).json()
         # print(data)
 
+        if data['code'] == 'AccessTokenInvalid':
+            self.error = f'[{self.nick_name}] AccessTokenInvalid, 重试一次.'
+            return
+
         if 'success' not in data:
             return f'[{self.nick_name}] 签到失败:\n{data}'
 
@@ -113,7 +117,10 @@ def main():
     result = []
     users = getcfg('ALIYUN', 'aliyun.cfg')
     for i in users:
-        result.append(SignIn(i).run())
+        foo = SignIn(i).run()
+        if '重试一次' in foo['msg']:
+            foo = SignIn(i).run()
+        result.append(foo)
 
     msg = '\n\n'.join([i['msg'] for i in result])
     token = '\n'.join([i['token'] for i in result])
