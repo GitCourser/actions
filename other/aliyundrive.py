@@ -94,7 +94,7 @@ class SignIn:
             # 月底领奖
             if count == days:
                 for i in range(1, days + 1):
-                    self.s.post(f'{api}sign_in_reward', json={'signInDay': i}).json()
+                    self.s.post(f'{api}sign_in_reward', json={'signInDay': i})
                     sleep(1)
                 reward = f'\n🎉本月奖励已全部领取🎉\n超级会员: {svipAmount} 天\n容量延期: {postAmount} 天'
             # 只签不领
