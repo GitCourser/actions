@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2023-03-18 16:15:01
-# LastEditTime : 2023-04-03 19:59:11
+# LastEditTime : 2023-04-30 16:17:49
 # Description  : 阿里云盘签到
 # ==============================================================================
 
@@ -75,7 +75,12 @@ class SignIn:
             return f'[{self.nick_name}] 签到失败:\n{data}'
 
         count = data['result']['signInCount']  # 签到天数
-        days = len(data['result']['signInLogs'])  # 本月总天数
+        days = data['result']['signInLogs'][-1]['day']  # 当月总天数
+        # 首次签到不是当月第1天时, 修正当月总天数
+        if (first := int(data['result']['signInLogs'][0]['calendarDay'])) > 1:
+            days = days - first + 1
+        svipAmount = sum([i['rewardAmount'] for i in data['result']['signInLogs'] if i['type'] == 'svip8t'])
+        postAmount = sum([i['rewardAmount'] for i in data['result']['signInLogs'] if i['type'] == 'postpone'])
 
         if self.is_reward:
             # 当天领奖
@@ -88,16 +93,10 @@ class SignIn:
         else:
             # 月底领奖
             if count == days:
-                foo = []
                 for i in range(1, days + 1):
-                    data = self.s.post(f'{api}sign_in_reward', json={'signInDay': i}).json()
-                    try:
-                        foo.append(data['result']['notice'])
-                    except Exception:
-                        pass
+                    self.s.post(f'{api}sign_in_reward', json={'signInDay': i}).json()
                     sleep(1)
-                bar = '\n'.join(foo)
-                reward = f'\n本月奖励已全部领取.\n{bar}'
+                reward = f'\n🎉本月奖励已全部领取🎉\n超级会员: {svipAmount} 天\n容量延期: {postAmount} 天'
             # 只签不领
             else:
                 reward = '\n今日暂不领奖'
