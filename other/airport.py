@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2022-01-29 21:08:26
-# LastEditTime : 2022-03-09 23:22:06
+# LastEditTime : 2023-05-07 21:13:57
 # Description  : 机场签到
 # ==============================================================================
 
@@ -34,11 +34,13 @@ def SignIn(url):
         time.sleep(1)
         SignIn(url)
     rs = response.json()
+    # print(rs)
     # {'ret': 0, 'msg': '您似乎已经签到过了...'}
     # {'msg': '获得了 90 MB流量.', 'unflowtraffic': 2412773376, 'traffic': '2.25GB', 'trafficInfo': {'todayUsedTraffic': '0B', 'lastUsedTraffic': '1.75MB', 'unUsedTraffic': '2.25GB'}, 'ret': 1}
+    # {'msg': '你获得了 2648 MB流量', 'ret': 1}
     msg = rs['msg']
-    if rs['ret'] == 1:
-        msg += '，剩余流量：' + rs['traffic']
+    # if rs['ret'] == 1:
+    #     msg += '，剩余流量：' + rs['traffic']
     return msg
 
 
@@ -56,7 +58,7 @@ def login(url, user, passwd):
 def Ping(host):
     if platform.system() == 'Windows':
         try:
-            ping = subprocess.Popen(f'ping -n 1 {host}', stdout=subprocess.PIPE, encoding='gbk', shell=True)
+            ping = subprocess.Popen(f'ping -n 1 {host}', stdout=subprocess.PIPE, encoding='gbk')
             ping.wait()
             lines = ping.stdout.readlines()
             D = str([line for line in lines])
@@ -68,7 +70,7 @@ def Ping(host):
             return -1
     elif platform.system() == 'Linux':
         try:
-            p = subprocess.Popen(f'ping -c 1 {host}', stdout=subprocess.PIPE, encoding='gbk', shell=True)
+            p = subprocess.Popen(f'ping -c 1 {host}', stdout=subprocess.PIPE, encoding='utf-8')
             out = p.stdout.read()
             pat = re.compile('time=' + '(.*?)' + ' ms', re.S)
             result = pat.findall(out)
@@ -82,19 +84,20 @@ def main():
     airport = getcfg('airport', 'airport.cfg')
     Feedback = '共计' + str(len(airport['site'])) + '个站点需签到\n'
     for i in airport['site']:
-        print('开始计算最快的服务器...')
-        U = [{}] * len(i['url'])
-        for j, k in enumerate(i['url']):
-            ms = Ping(str(k).replace('http://', '').replace('https://', ''))
-            U[j] = {'ms': int(ms), 'url': k}
-        url = U[0]['url']
-        U.sort(key=lambda x: x['ms'])
-        # print(U)
-        for j in U:
-            if j['ms'] != -1:
-                url = j['url']
-                break
-        # print('最快的服务器为：' + url)
+        if (url_num := len(i['url'])) > 1:
+            print('开始计算最快的服务器...')
+            U = [{}] * url_num
+            for j, k in enumerate(i['url']):
+                ms = Ping(str(k).replace('http://', '').replace('https://', ''))
+                U[j] = {'ms': int(ms), 'url': k}
+            url = U[0]['url']
+            U.sort(key=lambda x: x['ms'])
+            # print(U)
+            for j in U:
+                if j['ms'] != -1:
+                    url = j['url']
+                    break
+            print('最快的服务器为：' + url)
         try:
             foo = login(url, i['email'], i['password'])
             if foo != '登录成功':
