@@ -20,13 +20,7 @@ jobs:
       - name: Run Script
         env:
           airport: ${{ secrets.AIRPORT }}
-          chinag: ${{ secrets.CHINAG }}
           WX_CFG: ${{ secrets.WX_CFG }}
-          CPDAILY: ${{ secrets.CPDAILY }}
         run: |
           cd other
-          python ./airport.py
-          python chinag.py
-          # cd ../cpdaily
-          # pip install -r requirements.txt
-          # python ./submit.py
+          python airport.py
