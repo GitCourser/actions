@@ -20,7 +20,9 @@ jobs:
       - name: Run Script
         env:
           airport: ${{ secrets.AIRPORT }}
+          moss: ${{ secrets.MOSS }}
           WX_CFG: ${{ secrets.WX_CFG }}
         run: |
           cd other
           python airport.py
+          python moss.py
