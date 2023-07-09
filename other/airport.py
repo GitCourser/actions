@@ -1,18 +1,17 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2022-01-29 21:08:26
-# LastEditTime : 2023-05-07 21:13:57
+# LastEditTime : 2023-07-09 14:00:24
 # Description  : 机场签到
 # ==============================================================================
 
 import re
 import time
 import requests
-import sys
 import subprocess
 import platform
-
-sys.path.append('..')
+from sys import path
+path.append('..')
 from common import runtime, UA, WeChat, getcfg, isCloud
 
 app = '机场签到'
@@ -40,7 +39,7 @@ def SignIn(url):
     # {'msg': '你获得了 2648 MB流量', 'ret': 1}
     msg = rs['msg']
     # if rs['ret'] == 1:
-    #     msg += '，剩余流量：' + rs['traffic']
+    #     msg += '，剩余流量：rs['traffic']
     return msg
 
 
@@ -62,7 +61,7 @@ def Ping(host):
             ping.wait()
             lines = ping.stdout.readlines()
             D = str([line for line in lines])
-            pat = re.compile('平均' + '(.*?)' + 'ms', re.S)
+            pat = re.compile(r'平均(.*?)ms', re.S)
             result = pat.findall(D)
             return str(result[0]).replace(' ', '').replace('=', '')
             # 数据包: 已发送 = 1，已接收 = 0，丢失 = 1 (100% 丢失)，\n
@@ -72,7 +71,7 @@ def Ping(host):
         try:
             p = subprocess.Popen(f'ping -c 1 {host}', stdout=subprocess.PIPE, encoding='utf-8')
             out = p.stdout.read()
-            pat = re.compile('time=' + '(.*?)' + ' ms', re.S)
+            pat = re.compile(r'time=(.*?) ms', re.S)
             result = pat.findall(out)
             return result[0]
         except BaseException:
@@ -82,8 +81,8 @@ def Ping(host):
 @runtime(app)
 def main():
     airport = getcfg('airport', 'airport.cfg')
-    Feedback = '共计' + str(len(airport['site'])) + '个站点需签到\n'
-    for i in airport['site']:
+    Feedback = f'共计 {len(airport)} 个站点需签到\n'
+    for i in airport:
         if (url_num := len(i['url'])) > 1:
             print('开始计算最快的服务器...')
             U = [{}] * url_num
@@ -97,16 +96,16 @@ def main():
                 if j['ms'] != -1:
                     url = j['url']
                     break
-            print('最快的服务器为：' + url)
+            print(f'最快的服务器为：{url}')
         try:
             foo = login(url, i['email'], i['password'])
             if foo != '登录成功':
                 print('登录失败:', foo)
                 continue
             case = SignIn(url)
-            Feedback += i['note'] + '：' + case + '\n'
+            Feedback += f"{i['note']}：{case}\n"
         except Exception:
-            Feedback += i['note'] + '：出错\n'
+            Feedback += f"{i['note']}：出错\n"
     print(Feedback)
 
     if isCloud:
