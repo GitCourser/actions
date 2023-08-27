@@ -131,6 +131,7 @@ def main():
             msg += '\n\n' + put_secret('ALIYUN', token)
             print(msg)
             WeChat().send(app, msg)
+            print(token)
         else:
             print(f'{msg}\n\n{token}')
             setcfg('aliyun.cfg', token)
