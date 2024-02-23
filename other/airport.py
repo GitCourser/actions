@@ -97,6 +97,8 @@ def main():
                     url = j['url']
                     break
             print(f'最快的服务器为：{url}')
+        else:
+            url = i['url'][0]
         try:
             foo = login(url, i['email'], i['password'])
             if foo != '登录成功':
