@@ -20,9 +20,9 @@ jobs:
         # cd ..
         # tar -zcvf bao.tar.gz bao
         mkdir download
-        yt-dlp -P ./download https://v.qq.com/x/cover/mzc00200gbahyn5/e0034bhr6k7.html
+        yt-dlp -P ./download http://www.mgtv.com/b/385724/13069162.html
         tar -zcvf down.tar.gz download
     - name: Upload your file
       run: |
         curl -sL https://git.io/file-transfer | sh
-        ./transfer fic down.tar.gz
+        ./transfer wss down.tar.gz
