@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2023-03-18 16:15:01
-# LastEditTime : 2023-04-30 16:17:49
+# LastEditTime : 2024-04-30 16:55:45
 # Description  : 阿里云盘签到
 # ==============================================================================
 
@@ -18,7 +18,7 @@ app = '阿里云盘签到'
 
 
 class SignIn:
-    def __init__(self, refresh_token, is_reward=False):
+    def __init__(self, refresh_token, ver, is_reward=False):
         """签到类
 
         Args:
@@ -26,6 +26,7 @@ class SignIn:
             is_reward (bool, optional): 是否当天领取奖励, 默认为否.
         """
         self.refresh_token = refresh_token
+        self.ver = ver
         self.is_reward = is_reward
         self.hide_refresh_token = self._hide_refresh_token()
         self.new_token = ''
@@ -61,10 +62,11 @@ class SignIn:
 
     def _sign_in(self):
         """签到"""
-        api = 'https://member.aliyundrive.com/v1/activity/'
+        api_1 = 'https://member.aliyundrive.com/v1/activity/'
+        api_2 = 'https://member.aliyundrive.com/v2/activity/'
         self.s.headers |= {'Authorization': f'Bearer {self.access_token}'}
         self.s.params = {'_rx-s': 'mobile'}
-        data = self.s.post(f'{api}sign_in_list', json={'isReward': False}).json()
+        data = self.s.post(f'{api_1}sign_in_list', json={'isReward': False}).json()
         # print(data)
 
         if data['code'] == 'AccessTokenInvalid':
@@ -84,7 +86,7 @@ class SignIn:
 
         if self.is_reward:
             # 当天领奖
-            data = self.s.post(f'{api}sign_in_reward', json={'signInDay': count}).json()
+            data = self.s.post(f'{api_1}sign_in_reward', json={'signInDay': count}).json()
             # print(data)
             try:
                 reward = f'''\n今日获得: {data['result']['name']} {data['result']['description']}'''
@@ -94,8 +96,15 @@ class SignIn:
             # 月底领奖
             if count == days:
                 for i in range(1, days + 1):
-                    self.s.post(f'{api}sign_in_reward', json={'signInDay': i})
+                    self.s.post(f'{api_1}sign_in_reward', json={'signInDay': i})
+                    # data['result']['notice']
                     sleep(1)
+                    try:
+                        if self.ver == 2:
+                            print(self.s.post(f'{api_2}sign_in_reward', json={'signInDay': i}))
+                            sleep(1)
+                    except Exception as e:
+                        print(e)
                 reward = f'\n🎉本月奖励已全部领取🎉\n超级会员: {svipAmount} 天\n容量延期: {postAmount} 天'
             # 只签不领
             else:
@@ -115,10 +124,11 @@ class SignIn:
 def main():
     result = []
     users = getcfg('ALIYUN', 'aliyun.cfg')
-    for i in users:
-        foo = SignIn(i).run()
+    for i, j in enumerate(users):
+        v = 2 if i == 0 else 1
+        foo = SignIn(j, v).run()
         if '重试一次' in foo['msg']:
-            foo = SignIn(i).run()
+            foo = SignIn(j, v).run()
         result.append(foo)
 
     msg = '\n\n'.join([i['msg'] for i in result])
