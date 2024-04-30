@@ -101,7 +101,7 @@ class SignIn:
                     sleep(1)
                     try:
                         if self.ver == 2:
-                            print(self.s.post(f'{api_2}sign_in_task_reward', json={'signInDay': i}))
+                            print(self.s.post(f'{api_2}sign_in_task_reward', json={'signInDay': i}).text)
                             sleep(1)
                     except Exception as e:
                         print(e)
