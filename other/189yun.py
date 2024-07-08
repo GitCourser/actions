@@ -24,7 +24,7 @@ msg = ''
 
 
 def hide_phone(phone):
-    return f'{phone[:3]}****{phone[-4:]}'
+    return f'{phone[:3]}***{phone[-3:]}'
 
 
 def rsa_encode(j_rsakey, string):
@@ -82,7 +82,7 @@ def login(phone, pwd):
         'paramId': paramId
     })
     rs = r.json()
-    msg += f"\n{hide_phone(phone)}: {rs['msg']}\n"
+    msg += f"\n[{hide_phone(phone)}] {rs['msg']}\n"
     if 'toUrl' in rs:
         s.get(rs['toUrl'])
         # print(r.text)
