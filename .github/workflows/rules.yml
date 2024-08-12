@@ -5,7 +5,7 @@ on:
     branches:
       - rule_custom
   # schedule:
-  #   - cron: "0 2 * * *"
+  #   - cron: "0 2 * * 0"
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -205,5 +205,5 @@ jobs:
       #   run: |
       #     cd publish || exit 1
       #     for file in $(ls); do
-      #       curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@release/${file}"
+      #       curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@rule_release/${file}"
       #     done
