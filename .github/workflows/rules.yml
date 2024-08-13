@@ -201,9 +201,9 @@ jobs:
           git remote add origin "https://${{ github.actor }}:${{ secrets.PUBLIC_REPO_TOKEN }}@github.com/${{ github.repository }}"
           git push -f -u origin rule_release
 
-      # - name: Purge jsdelivr CDN
-      #   run: |
-      #     cd publish || exit 1
-      #     for file in $(ls); do
-      #       curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@rule_release/${file}"
-      #     done
+      - name: Purge jsdelivr CDN
+        run: |
+          cd publish || exit 1
+          for file in $(ls); do
+            curl -i "https://purge.jsdelivr.net/gh/${{ github.repository }}@rule_release/${file}"
+          done
