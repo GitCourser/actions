@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2024-07-04 16:50:21
-# LastEditTime : 2024-09-18 10:39:42
+# LastEditTime : 2024-09-18 10:56:08
 # Description  : 天翼云盘签到
 # ==============================================================================
 
@@ -114,7 +114,7 @@ def main():
         if not rs['isSign']:
             info += f"签到获得{rs['netdiskBonus']}M空间\n"
         else:
-            msg += '今日已签过\n'
+            msg += f"已签过, 获得{rs['netdiskBonus']}M空间\n"
             # continue
 
         for i, v in enumerate(apis):
