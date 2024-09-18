@@ -1,13 +1,15 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2024-07-04 16:50:21
-# LastEditTime : 2024-07-07 13:37:37
+# LastEditTime : 2024-09-18 10:39:42
 # Description  : 天翼云盘签到
 # ==============================================================================
 
 import re
 import rsa
-import requests
+from requests import Session
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from time import sleep
 from sys import path
 path.append('..')
@@ -36,7 +38,7 @@ def rsa_encode(j_rsakey, string):
 
 def login(phone, pwd):
     global msg
-    s = requests.Session()
+    s = Session()
     r = s.get('https://m.cloud.189.cn/udb/udb_login.jsp?clientType=wap')
     # print(r.text)
     match = re.search(r'https://.+\b', r.text)
@@ -100,6 +102,7 @@ def main():
             continue
         info = ''
 
+        s.mount('https://', HTTPAdapter(max_retries=Retry(total=3, status_forcelist=[500, 502, 503, 504])))
         s.headers.update({
             'Host': 'm.cloud.189.cn',
             'User-Agent': ua_mobile,
@@ -112,7 +115,7 @@ def main():
             info += f"签到获得{rs['netdiskBonus']}M空间\n"
         else:
             msg += '今日已签过\n'
-            continue
+            # continue
 
         for i, v in enumerate(apis):
             sleep(10)
