@@ -1,13 +1,13 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2024-07-04 16:50:21
-# LastEditTime : 2024-09-18 10:56:08
+# LastEditTime : 2024-10-02 18:00:31
 # Description  : 天翼云盘签到
 # ==============================================================================
 
 import re
 import rsa
-from requests import Session
+from requests import Session, get
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from time import sleep
@@ -21,6 +21,7 @@ apis = [
     'https://m.cloud.189.cn/v2/drawPrizeMarketDetails.action?taskId=TASK_SIGNIN_PHOTOS&activityId=ACT_SIGNIN',
     'https://m.cloud.189.cn/v2/drawPrizeMarketDetails.action?taskId=TASK_2022_FLDFS_KJ&activityId=ACT_SIGNIN',
 ]
+api_tv = 'http://api.cloud.189.cn/family/manage/exeFamilyUserSign.action'
 users = getcfg('e_189', 'e_189.cfg')
 msg = ''
 
@@ -109,6 +110,8 @@ def main():
             'Referer': 'https://m.cloud.189.cn/zhuanti/2016/sign/index.jsp',
         })
 
+        # 签到
+        print('签到')
         rs = s.get('https://api.cloud.189.cn/mkt/userSign.action').json()
         # print(rs)
         if not rs['isSign']:
@@ -117,6 +120,8 @@ def main():
             msg += f"已签过, 获得{rs['netdiskBonus']}M空间\n"
             # continue
 
+        # 抽奖
+        print('抽奖')
         for i, v in enumerate(apis):
             sleep(10)
             rs = s.get(v).json()
@@ -124,6 +129,15 @@ def main():
                 info += f"抽奖{i+1}获得{rs['prizeName']}\n"
             else:
                 print(i, rs)
+
+        # 家庭云签到
+        print('家庭云签到')
+        rs = get(api_tv, headers=user['head'], params={'familyId': user['id']}).text
+        match = re.search(r'<bonusSpace>(\d+)</bonusSpace>', rs)
+        if match:
+            info += f"家庭云签到获得{match.group(1)}M空间\n"
+        else:
+            info += f'家庭云签到失败\n{rs}'
 
         nums = re.findall(r'(\d+)M', info)
         total = sum([int(i) for i in nums])
