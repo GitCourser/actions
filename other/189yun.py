@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2024-07-04 16:50:21
-# LastEditTime : 2024-10-02 18:00:31
+# LastEditTime : 2024-10-04 15:46:46
 # Description  : 天翼云盘签到
 # ==============================================================================
 
@@ -131,13 +131,16 @@ def main():
                 print(i, rs)
 
         # 家庭云签到
-        print('家庭云签到')
-        rs = get(api_tv, headers=user['head'], params={'familyId': user['id']}).text
-        match = re.search(r'<bonusSpace>(\d+)</bonusSpace>', rs)
-        if match:
-            info += f"家庭云签到获得{match.group(1)}M空间\n"
-        else:
-            info += f'家庭云签到失败\n{rs}'
+        try:
+            print('家庭云签到')
+            rs = get(api_tv, headers=user['head'], params={'familyId': user['id']}).text
+            match = re.search(r'<bonusSpace>(\d+)</bonusSpace>', rs)
+            if match:
+                info += f"家庭云签到获得{match.group(1)}M空间\n"
+            else:
+                print('家庭云签到失败', rs)
+        except Exception:
+            pass
 
         nums = re.findall(r'(\d+)M', info)
         total = sum([int(i) for i in nums])
