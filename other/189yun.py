@@ -1,16 +1,17 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2024-07-04 16:50:21
-# LastEditTime : 2024-10-04 15:46:46
+# LastEditTime : 2024-10-06 14:28:53
 # Description  : 天翼云盘签到
 # ==============================================================================
 
 import re
 import rsa
+from hashlib import md5
 from requests import Session, get
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-from time import sleep
+from time import sleep, time
 from sys import path
 path.append('..')
 from common import runtime, WeChat, ua_mobile, UA, getcfg, isCloud
@@ -68,22 +69,27 @@ def login(phone, pwd):
     paramId = re.findall(r'paramId = "(.+?)"', r.text)[0]
     j_rsakey = re.findall(r'j_rsaKey" value="(\S+)"', r.text)[0]
 
-    s.headers.update({
-        'User-Agent': UA,
-        'Referer': 'https://open.e.189.cn/',
-        'lt': lt,
-    })
-    r = s.post('https://open.e.189.cn/api/logbox/oauth2/loginSubmit.do', data={
-        'appKey': 'cloud',
-        'accountType': '01',
-        'userName': f'{{RSA}}{rsa_encode(j_rsakey, phone)}',
-        'password': f'{{RSA}}{rsa_encode(j_rsakey, pwd)}',
-        'validateCode': '',
-        'captchaToken': token,
-        'returnUrl': returnUrl,
-        'mailSuffix': '@189.cn',
-        'paramId': paramId
-    })
+    s.headers.update(
+        {
+            'User-Agent': UA,
+            'Referer': 'https://open.e.189.cn/',
+            'lt': lt,
+        }
+    )
+    r = s.post(
+        'https://open.e.189.cn/api/logbox/oauth2/loginSubmit.do',
+        data={
+            'appKey': 'cloud',
+            'accountType': '01',
+            'userName': f'{{RSA}}{rsa_encode(j_rsakey, phone)}',
+            'password': f'{{RSA}}{rsa_encode(j_rsakey, pwd)}',
+            'validateCode': '',
+            'captchaToken': token,
+            'returnUrl': returnUrl,
+            'mailSuffix': '@189.cn',
+            'paramId': paramId,
+        },
+    )
     rs = r.json()
     msg += f"\n[{hide_phone(phone)}] {rs['msg']}\n"
     if 'toUrl' in rs:
@@ -92,6 +98,47 @@ def login(phone, pwd):
         return s
     else:
         return
+
+
+def family(sessionKey):
+    # accessToken
+    rs = get(
+        'https://cloud.189.cn/api/open/oauth2/getAccessTokenBySsKey.action',
+        headers={'Appkey': '600100885'},
+        params={'sessionKey': sessionKey},
+    ).json()
+    accessToken = rs['accessToken']
+
+    # 签名
+    def get_sign(data):
+        e = sorted([f'{k}={v}' for k, v in data.items()])
+        sign = md5('&'.join(e).encode()).hexdigest()
+        return sign
+
+    # 家庭api
+    def family_api(url, params={}):
+        t = str(int(time() * 1000))
+        data = {
+            'Timestamp': t,
+            'AccessToken': accessToken,
+        }
+        data |= params
+        headers = {
+            'Accept': 'application/json;charset=UTF-8',
+            'Sign-Type': '1',
+            'Signature': get_sign(data),
+            'Timestamp': t,
+            'Accesstoken': accessToken,
+        }
+        rs = get(url, headers=headers, params=params).json()
+        # print(rs)
+        if params:
+            return rs['bonusSpace']
+        else:
+            return rs['familyInfoResp'][0]['familyId']
+
+    id = family_api('https://api.cloud.189.cn/open/family/manage/getFamilyList.action')
+    return family_api('https://api.cloud.189.cn/open/family/manage/exeFamilyUserSign.action', {'familyId': id})
 
 
 @runtime(app)
@@ -104,11 +151,13 @@ def main():
         info = ''
 
         s.mount('https://', HTTPAdapter(max_retries=Retry(total=3, status_forcelist=[500, 502, 503, 504])))
-        s.headers.update({
-            'Host': 'm.cloud.189.cn',
-            'User-Agent': ua_mobile,
-            'Referer': 'https://m.cloud.189.cn/zhuanti/2016/sign/index.jsp',
-        })
+        s.headers.update(
+            {
+                'Host': 'm.cloud.189.cn',
+                'User-Agent': ua_mobile,
+                'Referer': 'https://m.cloud.189.cn/zhuanti/2016/sign/index.jsp',
+            }
+        )
 
         # 签到
         print('签到')
@@ -123,7 +172,7 @@ def main():
         # 抽奖
         print('抽奖')
         for i, v in enumerate(apis):
-            sleep(10)
+            sleep(7)
             rs = s.get(v).json()
             if 'prizeName' in rs:
                 info += f"抽奖{i+1}获得{rs['prizeName']}\n"
@@ -131,22 +180,16 @@ def main():
                 print(i, rs)
 
         # 家庭云签到
-        try:
-            print('家庭云签到')
-            rs = get(api_tv, headers=user['head'], params={'familyId': user['id']}).text
-            match = re.search(r'<bonusSpace>(\d+)</bonusSpace>', rs)
-            if match:
-                info += f"家庭云签到获得{match.group(1)}M空间\n"
-            else:
-                print('家庭云签到失败', rs)
-        except Exception:
-            pass
+        print('家庭云签到')
+        rs = get('https://cloud.189.cn/api/portal/v2/getUserBriefInfo.action', cookies=s.cookies).json()
+        sessionKey = rs['sessionKey']
+        info += f'家庭云签到获得{family(sessionKey)}M空间\n'
 
         nums = re.findall(r'(\d+)M', info)
         total = sum([int(i) for i in nums])
         info += f'今日共获得{total}M空间\n'
         msg += info
-        sleep(10)
+        sleep(5)
 
     print(msg)
     if isCloud:
