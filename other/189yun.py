@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2024-07-04 16:50:21
-# LastEditTime : 2024-10-06 14:28:53
+# LastEditTime : 2024-10-06 21:48:17
 # Description  : 天翼云盘签到
 # ==============================================================================
 
@@ -179,15 +179,32 @@ def main():
             else:
                 print(i, rs)
 
-        # 家庭云签到
-        print('家庭云签到')
+        # 家庭云
+        print('家庭云')
         rs = get('https://cloud.189.cn/api/portal/v2/getUserBriefInfo.action', cookies=s.cookies).json()
         sessionKey = rs['sessionKey']
         info += f'家庭云签到获得{family(sessionKey)}M空间\n'
 
+        # 计算
         nums = re.findall(r'(\d+)M', info)
         total = sum([int(i) for i in nums])
         info += f'今日共获得{total}M空间\n'
+
+        # 查容量
+        print('查容量')
+        rs = get(
+            'https://cloud.189.cn/api/portal/getUserSizeInfo.action',
+            headers={'Accept': 'application/json;charset=UTF-8'},
+            cookies=s.cookies
+        ).json()
+        G = 1024**3
+        cloud_total = rs['cloudCapacityInfo']['totalSize'] / G
+        cloud_free = rs['cloudCapacityInfo']['freeSize'] / G if rs['cloudCapacityInfo']['freeSize'] > G else 0
+        family_total = rs['familyCapacityInfo']['totalSize'] / G
+        family_free = rs['familyCapacityInfo']['freeSize'] / G if rs['familyCapacityInfo']['freeSize'] > G else 0
+        info += f'个人: {cloud_total:.2f} G, 剩: {cloud_free:.2f} G\n'
+        info += f'家庭: {family_total:.2f} G, 剩: {family_free:.2f} G\n'
+
         msg += info
         sleep(5)
 
