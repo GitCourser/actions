@@ -1,13 +1,14 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2024-07-04 16:50:21
-# LastEditTime : 2024-10-06 21:48:17
+# LastEditTime : 2024-10-07 11:33:19
 # Description  : 天翼云盘签到
 # ==============================================================================
 
 import re
 import rsa
 from hashlib import md5
+from random import randint
 from requests import Session, get
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -172,7 +173,7 @@ def main():
         # 抽奖
         print('抽奖')
         for i, v in enumerate(apis):
-            sleep(7)
+            sleep(randint(5, 9))
             rs = s.get(v).json()
             if 'prizeName' in rs:
                 info += f"抽奖{i+1}获得{rs['prizeName']}\n"
@@ -181,7 +182,8 @@ def main():
 
         # 家庭云
         print('家庭云')
-        rs = get('https://cloud.189.cn/api/portal/v2/getUserBriefInfo.action', cookies=s.cookies).json()
+        s.headers = {'Accept': 'application/json;charset=UTF-8'}
+        rs = s.get('https://cloud.189.cn/api/portal/v2/getUserBriefInfo.action').json()
         sessionKey = rs['sessionKey']
         info += f'家庭云签到获得{family(sessionKey)}M空间\n'
 
@@ -192,11 +194,7 @@ def main():
 
         # 查容量
         print('查容量')
-        rs = get(
-            'https://cloud.189.cn/api/portal/getUserSizeInfo.action',
-            headers={'Accept': 'application/json;charset=UTF-8'},
-            cookies=s.cookies
-        ).json()
+        rs = s.get('https://cloud.189.cn/api/portal/getUserSizeInfo.action').json()
         G = 1024**3
         cloud_total = rs['cloudCapacityInfo']['totalSize'] / G
         cloud_free = rs['cloudCapacityInfo']['freeSize'] / G if rs['cloudCapacityInfo']['freeSize'] > G else 0
@@ -206,7 +204,7 @@ def main():
         info += f'家庭: {family_total:.2f} G, 剩: {family_free:.2f} G\n'
 
         msg += info
-        sleep(5)
+        sleep(randint(5, 7))
 
     print(msg)
     if isCloud:
