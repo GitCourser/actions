@@ -1,14 +1,14 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2024-07-04 16:50:21
-# LastEditTime : 2024-10-07 11:33:19
+# LastEditTime : 2024-10-10 16:36:04
 # Description  : 天翼云盘签到
 # ==============================================================================
 
 import re
 import rsa
 from hashlib import md5
-from random import randint
+from random import uniform
 from requests import Session, get
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
@@ -21,7 +21,7 @@ app = '天翼云盘签到'
 apis = [
     'https://m.cloud.189.cn/v2/drawPrizeMarketDetails.action?taskId=TASK_SIGNIN&activityId=ACT_SIGNIN',
     'https://m.cloud.189.cn/v2/drawPrizeMarketDetails.action?taskId=TASK_SIGNIN_PHOTOS&activityId=ACT_SIGNIN',
-    'https://m.cloud.189.cn/v2/drawPrizeMarketDetails.action?taskId=TASK_2022_FLDFS_KJ&activityId=ACT_SIGNIN',
+    # 'https://m.cloud.189.cn/v2/drawPrizeMarketDetails.action?taskId=TASK_2022_FLDFS_KJ&activityId=ACT_SIGNIN',
 ]
 api_tv = 'http://api.cloud.189.cn/family/manage/exeFamilyUserSign.action'
 users = getcfg('e_189', 'e_189.cfg')
@@ -173,7 +173,7 @@ def main():
         # 抽奖
         print('抽奖')
         for i, v in enumerate(apis):
-            sleep(randint(5, 9))
+            sleep(round(uniform(5, 9), 2))
             rs = s.get(v).json()
             if 'prizeName' in rs:
                 info += f"抽奖{i+1}获得{rs['prizeName']}\n"
@@ -204,7 +204,7 @@ def main():
         info += f'家庭: {family_total:.2f} G, 剩: {family_free:.2f} G\n'
 
         msg += info
-        sleep(randint(5, 7))
+        sleep(round(uniform(5, 7), 2))
 
     print(msg)
     if isCloud:
