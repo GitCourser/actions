@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2024-07-04 16:50:21
-# LastEditTime : 2024-10-10 16:36:04
+# LastEditTime : 2024-10-13 00:39:51
 # Description  : 天翼云盘签到
 # ==============================================================================
 
@@ -138,8 +138,8 @@ def family(sessionKey):
         else:
             return rs['familyInfoResp'][0]['familyId']
 
-    id = family_api('https://api.cloud.189.cn/open/family/manage/getFamilyList.action')
-    return family_api('https://api.cloud.189.cn/open/family/manage/exeFamilyUserSign.action', {'familyId': id})
+    # id = family_api('https://api.cloud.189.cn/open/family/manage/getFamilyList.action')
+    return family_api('https://api.cloud.189.cn/open/family/manage/exeFamilyUserSign.action', {'familyId': 809866631})
 
 
 @runtime(app)
