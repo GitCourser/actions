@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2024-07-04 16:50:21
-# LastEditTime : 2024-10-13 00:39:51
+# LastEditTime : 2024-10-13 13:25:29
 # Description  : 天翼云盘签到
 # ==============================================================================
 
@@ -145,6 +145,7 @@ def family(sessionKey):
 @runtime(app)
 def main():
     global msg
+    fam_size = []
     for user in users:
         s = login(user['phone'], user['pwd'])
         if not s:
@@ -170,7 +171,7 @@ def main():
             msg += f"已签过, 获得{rs['netdiskBonus']}M空间\n"
             # continue
 
-        # 抽奖
+        # # 抽奖
         print('抽奖')
         for i, v in enumerate(apis):
             sleep(round(uniform(5, 9), 2))
@@ -180,18 +181,12 @@ def main():
             else:
                 print(i, rs)
 
-        # 家庭云
-        print('家庭云')
-        s.headers = {'Accept': 'application/json;charset=UTF-8'}
-        rs = s.get('https://cloud.189.cn/api/portal/v2/getUserBriefInfo.action').json()
-        sessionKey = rs['sessionKey']
-        info += f'家庭云签到获得{family(sessionKey)}M空间\n'
-
         # 计算
         nums = re.findall(r'(\d+)M', info)
         total = sum([int(i) for i in nums])
         info += f'今日共获得{total}M空间\n'
 
+        s.headers = {'Accept': 'application/json;charset=UTF-8'}
         # 查容量
         print('查容量')
         rs = s.get('https://cloud.189.cn/api/portal/getUserSizeInfo.action').json()
@@ -200,11 +195,20 @@ def main():
         cloud_free = rs['cloudCapacityInfo']['freeSize'] / G if rs['cloudCapacityInfo']['freeSize'] > G else 0
         family_total = rs['familyCapacityInfo']['totalSize'] / G
         family_free = rs['familyCapacityInfo']['freeSize'] / G if rs['familyCapacityInfo']['freeSize'] > G else 0
-        info += f'个人: {cloud_total:.2f} G, 剩: {cloud_free:.2f} G\n'
-        info += f'家庭: {family_total:.2f} G, 剩: {family_free:.2f} G\n'
+        info += f'个人:{cloud_total:8.2f}G, 剩:{cloud_free:8.2f}G\n'
+        info += f'家庭:{family_total:8.2f}G, 剩:{family_free:8.2f}G\n'
 
+        # 家庭云
+        print('家庭云')
+        rs = s.get('https://cloud.189.cn/api/portal/v2/getUserBriefInfo.action').json()
+        sessionKey = rs['sessionKey']
+        fam_size.append(family(sessionKey))
+
+        # 合并消息
         msg += info
         sleep(round(uniform(5, 7), 2))
+
+    msg += f"\n家庭云获得:\n{' + '.join(map(str, fam_size))} = {sum(fam_size)}M"
 
     print(msg)
     if isCloud:
