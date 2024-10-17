@@ -25,7 +25,5 @@ jobs:
           WX_CFG: ${{ secrets.WX_CFG }}
           e_189: ${{ secrets.E_189 }}
         run: |
-          pip install pynacl rsa
-          cd other
-          python aliyundrive.py
-          python 189yun.py
+          pip install pynacl
+          cd other && python aliyundrive.py
