@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2023-03-18 16:15:01
-# LastEditTime : 2024-04-30 16:55:45
+# LastEditTime : 2024-04-30 17:16:42
 # Description  : 阿里云盘签到
 # ==============================================================================
 
@@ -12,7 +12,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
 path.append('..')
-from common import runtime, WeChat, getcfg, setcfg, isCloud
+from common import runtime, Gotify, getcfg, setcfg, isCloud
 
 app = '阿里云盘签到'
 
@@ -140,7 +140,7 @@ def main():
 
             msg += '\n\n' + put_secret('ALIYUN', token)
             print(msg)
-            WeChat().send(app, msg)
+            Gotify().send(app, msg)
             # print(token)
         else:
             print(f'{msg}\n\n{token}')

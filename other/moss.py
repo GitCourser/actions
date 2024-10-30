@@ -8,7 +8,7 @@
 import requests
 from sys import path
 path.append('..')
-from common import runtime, WeChat, isCloud, getcfg
+from common import runtime, Gotify, isCloud, getcfg
 
 app = 'moss签到'
 api = 'http://43.154.117.92:82/luomacode-api/'
@@ -30,8 +30,7 @@ def main():
 
     print(msg)
     if isCloud:
-        notify = WeChat()
-        notify.send(app, msg)
+        Gotify().send(app, msg)
 
 
 def run():

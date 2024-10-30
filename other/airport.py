@@ -1,7 +1,7 @@
 # ==============================================================================
 # Author       : Courser
 # Date         : 2022-01-29 21:08:26
-# LastEditTime : 2023-07-09 14:00:24
+# LastEditTime : 2024-02-23 14:18:04
 # Description  : 机场签到
 # ==============================================================================
 
@@ -12,10 +12,9 @@ import subprocess
 import platform
 from sys import path
 path.append('..')
-from common import runtime, UA, WeChat, getcfg, isCloud
+from common import runtime, UA, Gotify, getcfg, isCloud
 
 app = '机场签到'
-notify = WeChat()
 
 s = requests.session()
 s.headers = {
@@ -111,7 +110,7 @@ def main():
     print(Feedback)
 
     if isCloud:
-        notify.send(app, Feedback)
+        Gotify().send(app, Feedback)
 
 
 def run():
