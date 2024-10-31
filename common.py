@@ -104,6 +104,73 @@ class WeChat:
             print(result)
 
 
+class Gotify:
+    """Gotify消息通知"""
+    def __init__(self):
+        try:
+            datacfg = getcfg('GOTIFY_CFG', 'gotify.cfg')
+            self.api = datacfg['api']
+            self.token_info = datacfg['info']
+            self.token_warn = datacfg['warn']
+            self.token_error = datacfg['error']
+        except Exception:
+            print('Gotify配置错误')
+            return
+
+    def send(self, title, message, mode='info'):
+        """发送markdown消息
+
+        Args:
+            title (str): 标题
+            message (str): 消息内容
+            mode (str): info, warn, error
+        """
+        message = message.replace('\n', '  \n')
+        # print(message)
+        if mode == 'info':
+            token = self.token_info
+        elif mode == 'warn':
+            token = self.token_warn
+        else:
+            token = self.token_error
+
+        headers = {
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Content-Type': 'application/json'
+        }
+        data = {
+            'title': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'message': f'## {title}\n{message}',
+            'extras': {
+                'client::display': {
+                    'contentType': 'text/markdown'
+                }
+            },
+        }
+        response = requests.post(self.api, headers=headers, params={'token': token}, json=data)
+        if response.status_code == 200:
+            print('消息发送成功')
+        else:
+            print('消息发送失败', response.status_code)
+
+    def send_tab(self, title, table, message='', mode='info'):
+        """发送表格消息
+
+        Args:
+            title (str): 标题
+            table (list): 表格列表
+            message (str, 可选): 表格外文字内容.
+            mode (str): info, warn, error
+        """
+        if message:
+            message += '\n\n'
+        message += '|'.join(table[0]) + '\n' + (len(table[0]) * ':-:|')[:-1] + '\n'
+        for row in table[1:]:
+            message += '|'.join(row) + '\n'
+        # print(message)
+        self.send(title, message, mode)
+
+
 class runtime:
     """运行并计时"""
     def __init__(self, title=''):
