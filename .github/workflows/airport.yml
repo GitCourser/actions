@@ -21,7 +21,7 @@ jobs:
         env:
           airport: ${{ secrets.AIRPORT }}
           moss: ${{ secrets.MOSS }}
-          WX_CFG: ${{ secrets.WX_CFG }}
+          GOTIFY_CFG: ${{ secrets.GOTIFY_CFG }}
         run: |
           cd other
           python airport.py
