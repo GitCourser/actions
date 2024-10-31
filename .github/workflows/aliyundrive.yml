@@ -22,8 +22,7 @@ jobs:
           PUBLIC_REPO_TOKEN: ${{ secrets.PUBLIC_REPO_TOKEN }}
           GITHUB_REPOS: ${{ github.repository }}
           ALIYUN: ${{ secrets.ALIYUN }}
-          WX_CFG: ${{ secrets.WX_CFG }}
-          e_189: ${{ secrets.E_189 }}
+          GOTIFY_CFG: ${{ secrets.GOTIFY_CFG }}
         run: |
           pip install pynacl
           cd other && python aliyundrive.py
