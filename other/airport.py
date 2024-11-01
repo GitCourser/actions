@@ -102,6 +102,7 @@ def main():
             foo = login(url, i['email'], i['password'])
             if foo != '登录成功':
                 print('登录失败:', foo)
+                Feedback += f"{i['note']}：{foo}\n"
                 continue
             case = SignIn(url)
             Feedback += f"{i['note']}：{case}\n"
