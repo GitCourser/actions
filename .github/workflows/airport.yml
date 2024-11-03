@@ -1,8 +1,8 @@
 name: AirPort # & cpdaily
 
 on:
-  # schedule:
-  #   - cron: '3 3 * * *'  # 每天11点
+  schedule:
+    - cron: '3 3 * * *'  # 每天11点
   workflow_dispatch:
 
 env:
@@ -24,5 +24,5 @@ jobs:
           GOTIFY_CFG: ${{ secrets.GOTIFY_CFG }}
         run: |
           cd other
-          python airport.py
+          # python airport.py
           python moss.py
