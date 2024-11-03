@@ -24,5 +24,4 @@ jobs:
           GOTIFY_CFG: ${{ secrets.GOTIFY_CFG }}
         run: |
           cd other
-          # python airport.py
           python moss.py
