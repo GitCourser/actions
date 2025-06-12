@@ -141,7 +141,7 @@ def main():
             msg += '\n\n' + put_secret('ALIYUN', token)
             print(msg)
             Gotify().send(app, msg)
-            print(token)
+            # print(token)
         else:
             print(f'{msg}\n\n{token}')
             setcfg('aliyun.cfg', token)
